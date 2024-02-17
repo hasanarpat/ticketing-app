@@ -17,10 +17,16 @@ const Navbar = async () => {
           <AiTwotoneEdit />
         </Link>
       </div>
-      <div className='flex gap-10 items-center text-default'>
-        <p>{session && session.user?.name}</p>
+      <div className='flex gap-4 font-bold items-center text-default'>
+        <p className='text-sm'>{session && session.user?.name}</p>
         {session && session.user?.image != undefined && (
-          <Image alt='' src={session.user?.image} width={50} height={50} />
+          <Image
+            alt=''
+            src={session.user?.image}
+            width={30}
+            height={30}
+            className='rounded object-fill'
+          />
         )}
         {session ? (
           <Link href='/api/auth/signout?callbackUrl=/'>Logout</Link>

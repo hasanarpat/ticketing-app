@@ -18,6 +18,7 @@ export const options = {
         return {
           ...profile,
           role: userRole,
+          image: profile.avatar_url,
         };
       },
       clientId: process.env.GITHUB_ID,
@@ -36,6 +37,7 @@ export const options = {
           ...profile,
           id: profile.sub,
           role: userRole,
+          image: profile.picture,
         };
       },
       clientId: process.env.GOOGLE_ID,

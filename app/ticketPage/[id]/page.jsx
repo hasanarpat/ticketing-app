@@ -1,5 +1,7 @@
 import TicketForm from '@/app/(components)/TicketForm';
+import { getServerSession } from 'next-auth';
 import React from 'react';
+import { redirect } from 'next/navigation';
 
 const getTicketById = async (id) => {
   const res = await fetch(`http://localhost:3000/api/tickets/${id}`, {
@@ -22,6 +24,10 @@ const SingleTicket = async ({ params }) => {
       _id: 'new',
     };
   }
+
+  const session = await getServerSession();
+
+  if (session.user.role != 'admin') redirect('/');
 
   return (
     <div>
