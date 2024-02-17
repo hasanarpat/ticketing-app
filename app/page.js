@@ -1,4 +1,7 @@
+import { getServerSession } from 'next-auth';
 import TicketCard from './(components)/TicketCard';
+import { options } from './api/auth/[...nextauth]/options';
+import { redirect } from 'next/navigation';
 
 const getData = async () => {
   try {
@@ -12,6 +15,10 @@ const getData = async () => {
 };
 
 export default async function Home() {
+  const session = await getServerSession(options);
+
+  if (!session) redirect('/api/auth/signin?callbackUrl=/');
+
   const tickets = await getData();
 
   const uniqueCategories = [
