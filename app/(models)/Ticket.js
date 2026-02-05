@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { mongoUri } from '../../lib/db';
 
-mongoose.connect(process.env.MONGO);
+mongoose.connect(mongoUri);
 
 mongoose.Promise = global.Promise;
 

@@ -2,57 +2,38 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
 
 const UserForm = () => {
   const router = useRouter();
-
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.push('/api/auth/signin/callbackUrl=/');
-    },
-  });
-
   const [formData, setFormData] = useState({});
   const [err, setErr] = useState('');
 
   const handleChange = (e) => {
     const value = e.target.value;
     const name = e.target.name;
-
-    setFormData((prev) => ({
-      ...formData,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErr('');
 
-    const res = await fetch('/api/users', {
+    const res = await fetch('/api/v1/auth/register', {
       method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'same-origin',
       body: JSON.stringify(formData),
-      'content/type': 'application/json',
     });
 
-    console.log(res);
+    const data = await res.json();
 
     if (!res.ok) {
-      const response = await res.json();
-
-      setErr(response.message);
+      setErr(data?.error?.message || 'Kayıt başarısız');
     } else {
       router.refresh();
       router.push('/');
     }
   };
-
-  if (status === 'authenticated' && session.user?.role != 'admin')
-    return () => {
-      router.back();
-    };
 
   return (
     <div>

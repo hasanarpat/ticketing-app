@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-const TicketForm = ({ ticket }) => {
+const TicketForm = ({ ticket, fullWidth = false }) => {
   const router = useRouter();
 
   const EDITMODE = ticket._id === 'new' ? false : true;
@@ -29,21 +29,29 @@ const TicketForm = ({ ticket }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const body = {
+      ...formData,
+      priority: Number(formData.priority) || 1,
+      progress: Number(formData.progress) || 0,
+    };
+
     if (EDITMODE) {
-      const res = await fetch(`/api/tickets/${ticket._id}`, {
+      const res = await fetch(`/api/v1/tickets/${ticket._id}`, {
         method: 'PUT',
-        body: JSON.stringify({ formData }),
-        'content/type': 'application/json',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
         throw new Error('Failed to update Ticket.');
       }
     } else {
-      const res = await fetch('/api/tickets', {
+      const res = await fetch('/api/v1/tickets', {
         method: 'POST',
-        body: JSON.stringify({ formData }),
-        'content/type': 'application/json',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
@@ -69,7 +77,7 @@ const TicketForm = ({ ticket }) => {
   return (
     <div className="flex justify-center">
       <form
-        className="flex flex-col gap-3 w-1/2"
+        className={`flex flex-col gap-3 ${fullWidth ? 'w-full max-w-2xl' : 'w-1/2'}`}
         method="post"
         onSubmit={handleSubmit}
       >

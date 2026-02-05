@@ -1,11 +1,12 @@
-import { getServerSession } from 'next-auth';
+import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { AiOutlineDingtalk } from 'react-icons/ai';
 import { AiTwotoneEdit } from 'react-icons/ai';
-import Image from 'next/image';
+import { getV1Session } from '../../lib/auth-v1';
 
 const Navbar = async () => {
-  const session = await getServerSession();
+  const cookieStore = await cookies();
+  const session = await getV1Session(cookieStore.toString());
 
   return (
     <nav className='flex items-center justify-between bg-nav p-4'>
@@ -18,20 +19,13 @@ const Navbar = async () => {
         </Link>
       </div>
       <div className='flex gap-4 font-bold items-center text-default'>
-        <p className='text-sm'>{session && session.user?.name}</p>
-        {session && session.user?.image != undefined && (
-          <Image
-            alt=''
-            src={session.user?.image}
-            width={30}
-            height={30}
-            className='rounded object-fill'
-          />
-        )}
+        {session && <p className='text-sm'>{session.name}</p>}
         {session ? (
-          <Link href='/api/auth/signout?callbackUrl=/'>Logout</Link>
+          <form action="/api/v1/auth/logout" method="POST">
+            <button type="submit" className="hover:underline">Çıkış</button>
+          </form>
         ) : (
-          <Link href='/api/auth/signin'>Login</Link>
+          <Link href="/login">Giriş yap</Link>
         )}
       </div>
     </nav>

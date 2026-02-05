@@ -1,39 +1,36 @@
-import TicketForm from '@/app/(components)/TicketForm';
-import { getServerSession } from 'next-auth';
-import React from 'react';
+import TicketForm from '../(components)/TicketForm';
+import { cookies } from 'next/headers';
+import { getV1Session } from '../../../../lib/auth-v1';
 import { redirect } from 'next/navigation';
 
-const getTicketById = async (id) => {
-  const res = await fetch(`http://localhost:3000/api/tickets/${id}`, {
+async function getTicketById(id, cookieHeader) {
+  const base = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+  const res = await fetch(`${base}/api/v1/tickets/${id}`, {
     cache: 'no-store',
+    headers: cookieHeader ? { Cookie: cookieHeader } : {},
   });
-
   if (!res.ok) throw new Error('Failed to fetch ticket.');
+  const data = await res.json();
+  return data?.data ?? null;
+}
 
-  return await res.json();
-};
+export default async function SingleTicket({ params }) {
+  const cookieStore = await cookies();
+  const session = await getV1Session(cookieStore.toString());
 
-const SingleTicket = async ({ params }) => {
-  const EDITMODE = params.id === 'new' ? false : true;
-  let updateTicketdata = {};
+  if (!session) redirect('/login?callbackUrl=/ticketPage/' + params.id);
+
+  const EDITMODE = params.id !== 'new';
+  let updateTicketdata = { _id: 'new' };
 
   if (EDITMODE) {
-    updateTicketdata = await getTicketById(params.id);
-  } else {
-    updateTicketdata = {
-      _id: 'new',
-    };
+    const ticket = await getTicketById(params.id, cookieStore.toString());
+    if (ticket) updateTicketdata = { ...ticket, _id: ticket._id ?? params.id };
   }
-
-  const session = await getServerSession();
-
-  if (session.user.role != 'admin') redirect('/');
 
   return (
     <div>
       <TicketForm ticket={updateTicketdata} />
     </div>
   );
-};
-
-export default SingleTicket;
+}
