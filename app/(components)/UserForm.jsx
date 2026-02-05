@@ -9,24 +9,19 @@ const UserForm = () => {
   const [err, setErr] = useState('');
 
   const handleChange = (e) => {
-    const value = e.target.value;
-    const name = e.target.name;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErr('');
-
     const res = await fetch('/api/v1/auth/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'same-origin',
       body: JSON.stringify(formData),
     });
-
     const data = await res.json();
-
     if (!res.ok) {
       setErr(data?.error?.message || 'Kayıt başarısız');
     } else {
@@ -40,43 +35,39 @@ const UserForm = () => {
       <form
         onSubmit={handleSubmit}
         method="post"
-        className="flex flex-col gap-3 w-1/2"
+        className="flex flex-col gap-3 w-full max-w-md pixel-box p-4"
       >
-        <h1>Create New User</h1>
+        <h1 className="text-retro-cyan text-sm">[ NEW USER ]</h1>
+        <label>Name</label>
         <input
           id="name"
           name="name"
           onChange={handleChange}
           required
-          value={formData.name}
+          value={formData.name ?? ''}
           type="text"
-          className="m-2 bg-slate-400 rounded"
         />
+        <label>Email</label>
         <input
           id="email"
           name="email"
           onChange={handleChange}
           required
-          value={formData.email}
-          type="text"
-          className="m-2 bg-slate-400 rounded"
+          value={formData.email ?? ''}
+          type="email"
         />
+        <label>Password</label>
         <input
           id="password"
           name="password"
           onChange={handleChange}
           required
-          value={formData.password}
+          value={formData.password ?? ''}
           type="password"
-          className="m-2 bg-slate-400 rounded"
         />
-        <input
-          type="submit"
-          value="Create user"
-          className="bg-blue-300"
-        />
+        <input type="submit" value="[ CREATE USER ]" className="btn mt-2" />
       </form>
-      <p className="text-red-500">{err}</p>
+      {err && <p className="mt-2 text-retro-red text-xs">{err}</p>}
     </div>
   );
 };

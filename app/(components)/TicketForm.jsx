@@ -4,8 +4,7 @@ import { useState } from 'react';
 
 const TicketForm = ({ ticket, fullWidth = false }) => {
   const router = useRouter();
-
-  const EDITMODE = ticket._id === 'new' ? false : true;
+  const EDITMODE = ticket._id !== 'new';
 
   const startingTicketData = {
     title: '',
@@ -13,22 +12,28 @@ const TicketForm = ({ ticket, fullWidth = false }) => {
     priority: 1,
     progress: 0,
     status: 'not started',
-    category: 'need a job',
+    category: 'Need a Job',
   };
+
+  if (EDITMODE) {
+    startingTicketData.title = ticket.title ?? '';
+    startingTicketData.description = ticket.description ?? '';
+    startingTicketData.priority = ticket.priority ?? 1;
+    startingTicketData.progress = ticket.progress ?? 0;
+    startingTicketData.status = ticket.status ?? 'not started';
+    startingTicketData.category = ticket.category ?? 'Need a Job';
+  }
+
+  const [formData, setFormData] = useState(startingTicketData);
 
   const handleChange = (e) => {
     const value = e.target.value;
     const name = e.target.name;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const body = {
       ...formData,
       priority: Number(formData.priority) || 1,
@@ -42,10 +47,7 @@ const TicketForm = ({ ticket, fullWidth = false }) => {
         credentials: 'same-origin',
         body: JSON.stringify(body),
       });
-
-      if (!res.ok) {
-        throw new Error('Failed to update Ticket.');
-      }
+      if (!res.ok) throw new Error('Failed to update Ticket.');
     } else {
       const res = await fetch('/api/v1/tickets', {
         method: 'POST',
@@ -53,35 +55,22 @@ const TicketForm = ({ ticket, fullWidth = false }) => {
         credentials: 'same-origin',
         body: JSON.stringify(body),
       });
-
-      if (!res.ok) {
-        throw new Error('Failed to create Ticket.');
-      }
+      if (!res.ok) throw new Error('Failed to create Ticket.');
     }
-
     router.push('/');
     router.refresh();
   };
 
-  if (EDITMODE) {
-    startingTicketData['title'] = ticket.title;
-    startingTicketData['description'] = ticket.description;
-    startingTicketData['priority'] = ticket.priority;
-    startingTicketData['progress'] = ticket.progress;
-    startingTicketData['status'] = ticket.status;
-    startingTicketData['category'] = ticket.category;
-  }
-
-  const [formData, setFormData] = useState(startingTicketData);
-
   return (
     <div className="flex justify-center">
       <form
-        className={`flex flex-col gap-3 ${fullWidth ? 'w-full max-w-2xl' : 'w-1/2'}`}
+        className={`flex flex-col gap-3 ${fullWidth ? 'w-full max-w-2xl' : 'w-full max-w-md'}`}
         method="post"
         onSubmit={handleSubmit}
       >
-        <h3>{EDITMODE ? 'Update your Ticket' : 'Create your Ticket'}</h3>
+        <h3 className="text-retro-cyan text-sm">
+          {EDITMODE ? '[ UPDATE TICKET ]' : '[ CREATE TICKET ]'}
+        </h3>
         <label>Title</label>
         <input
           type="text"
@@ -93,76 +82,35 @@ const TicketForm = ({ ticket, fullWidth = false }) => {
         />
         <label>Description</label>
         <textarea
-          type="text"
           id="description"
           name="description"
           onChange={handleChange}
           required
           value={formData.description}
-          rows={5}
-        ></textarea>
+          rows={4}
+        />
         <label>Category</label>
-        <select
-          name="category"
-          id="category"
-          value={formData.category}
-          onChange={handleChange}
-        >
+        <select name="category" id="category" value={formData.category} onChange={handleChange}>
           <option value="Need a Job">Need A Job</option>
           <option value="Software Problems">Software Problems</option>
-          <option value="How to get a girlfriend">
-            How to get a girlfriend
-          </option>
+          <option value="How to get a girlfriend">How to get a girlfriend</option>
         </select>
-        <label>Priority</label>
-        <div>
-          <input
-            type="radio"
-            name="priority"
-            onChange={handleChange}
-            id="priority-1"
-            checked={formData.priority == 1}
-            value={1}
-          />
-          <label>1</label>{' '}
-          <input
-            type="radio"
-            name="priority"
-            onChange={handleChange}
-            id="priority-2"
-            checked={formData.priority == 2}
-            value={2}
-          />
-          <label>2</label>{' '}
-          <input
-            type="radio"
-            name="priority"
-            onChange={handleChange}
-            id="priority-3"
-            checked={formData.priority == 3}
-            value={3}
-          />
-          <label>3</label>{' '}
-          <input
-            type="radio"
-            name="priority"
-            onChange={handleChange}
-            id="priority-4"
-            checked={formData.priority == 4}
-            value={4}
-          />
-          <label>4</label>{' '}
-          <input
-            type="radio"
-            name="priority"
-            onChange={handleChange}
-            id="priority-5"
-            checked={formData.priority == 5}
-            value={5}
-          />
-          <label>5</label>
+        <label>Priority (1–5)</label>
+        <div className="flex gap-2 flex-wrap">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <label key={n} className="flex items-center gap-1 text-retro-muted cursor-pointer">
+              <input
+                type="radio"
+                name="priority"
+                onChange={handleChange}
+                checked={formData.priority == n}
+                value={n}
+              />
+              <span>{n}</span>
+            </label>
+          ))}
         </div>
-        <label>Progess</label>
+        <label>Progress %</label>
         <input
           type="range"
           id="progress"
@@ -173,19 +121,15 @@ const TicketForm = ({ ticket, fullWidth = false }) => {
           onChange={handleChange}
         />
         <label>Status</label>
-        <select
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-        >
+        <select name="status" value={formData.status} onChange={handleChange}>
           <option value="not started">Not Started</option>
           <option value="started">Started</option>
           <option value="done">Done</option>
         </select>
         <input
           type="submit"
-          className="btn"
-          value={EDITMODE ? 'Update Ticket' : 'Create Ticket'}
+          className="btn mt-2"
+          value={EDITMODE ? '[ UPDATE ]' : '[ CREATE ]'}
         />
       </form>
     </div>

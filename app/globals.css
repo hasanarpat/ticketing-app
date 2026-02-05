@@ -3,46 +3,86 @@
 @tailwind utilities;
 
 @layer base {
-  h1,
-  h2,
-  h3,
-  h4 {
-    @apply font-bold;
+  body {
+    @apply font-pixel antialiased;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
   }
 
-  h1 {
-    @apply text-4xl;
+  h1, h2, h3, h4 {
+    @apply font-bold text-retro-text;
   }
-  h2 {
-    @apply text-3xl;
-  }
-  h3 {
-    @apply text-2xl;
-  }
-  h4 {
-    @apply text-xl;
-  }
+  h1 { @apply text-2xl sm:text-3xl; }
+  h2 { @apply text-xl sm:text-2xl; }
+  h3 { @apply text-lg sm:text-xl; }
+  h4 { @apply text-base sm:text-lg; }
+
   p {
-    @apply text-sm text-default;
+    @apply text-retro-text text-sm;
+  }
+
+  a {
+    @apply text-retro-cyan hover:text-retro-green transition-colors;
   }
 
   form {
-    @apply rounded-xl p-4;
+    @apply p-4 border-2 border-retro-border bg-retro-panel;
   }
 
   label {
-    @apply mt-4;
+    @apply block mt-3 text-retro-muted text-xs uppercase tracking-wider;
   }
 
-  input,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
   select,
   textarea {
-    @apply m-1 rounded bg-card p-1;
+    @apply w-full bg-retro-bg border-2 border-retro-border text-retro-text p-2 text-sm;
+    @apply focus:border-retro-cyan focus:outline-none;
+  }
+
+  input[type="radio"] {
+    @apply accent-retro-cyan;
+  }
+
+  input[type="range"] {
+    @apply accent-retro-cyan;
   }
 }
 
 @layer components {
   .btn {
-    @apply hover:no-underline bg-blue-accent hover:bg-blue-accent-hover tracking-wider w-full text-center text-nav font-bold cursor-pointer uppercase px-4 py-2 rounded-md transition-colors block;
+    @apply font-pixel font-bold uppercase tracking-wider text-retro-bg;
+    @apply bg-retro-green border-2 border-retro-border px-4 py-2;
+    @apply hover:bg-retro-cyan hover:border-retro-cyan transition-colors cursor-pointer;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+    box-shadow: 3px 3px 0 0 #3d2463;
   }
+  .btn:active {
+    box-shadow: 1px 1px 0 0 #3d2463;
+    transform: translate(1px, 1px);
+  }
+
+  .pixel-box {
+    @apply border-2 border-retro-border bg-retro-panel;
+    box-shadow: 4px 4px 0 0 #3d2463;
+  }
+}
+
+/* Optional: subtle CRT scanline overlay */
+.crt-overlay::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  z-index: 9999;
 }

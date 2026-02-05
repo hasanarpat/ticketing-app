@@ -1,10 +1,11 @@
 const ProgressBar = ({ progress }) => {
+  const pct = Math.min(100, Math.max(0, Number(progress) || 0));
   return (
-    <div className="w-full bg-gray-200 rounded-full h-2.5">
+    <div className="w-20 h-2 border border-retro-border bg-retro-bg overflow-hidden">
       <div
-        className="bg-blue-600 h-2.5 rounded-full"
-        style={{ width: `${progress}%` }}
-      ></div>
+        className="h-full bg-retro-cyan transition-all"
+        style={{ width: `${pct}%` }}
+      />
     </div>
   );
 };

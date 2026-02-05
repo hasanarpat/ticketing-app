@@ -14,33 +14,31 @@ const TicketCard = ({ ticket }) => {
       minute: '2-digit',
       hour12: false,
     };
-
     const date = new Date(timeStamp);
-    const formattedDate = date.toLocaleString('en-us', options);
-    return formattedDate;
+    return date.toLocaleString('en-us', options);
   };
 
   return (
-    <div className='flex flex-col bg-card hover:bg-card-hover rounded-md shadow-lg p-3 m-2'>
-      <div className='flex mb-3'>
+    <div className="pixel-box p-3 m-2 hover:border-retro-border-bright transition-colors">
+      <div className="flex mb-2">
         <Priority priority={ticket.priority} />
-        <div className='ml-auto'>
+        <div className="ml-auto">
           <DeleteBlock id={ticket._id} />
         </div>
       </div>
-      <Link href={`/ticketPage/${ticket._id}`} style={{ display: 'contents' }}>
-        <h4>{ticket.title}</h4>
-        <hr className='h-px border-0 bg-page mb-2' />
-        <p className='whitespace-pre-wrap'>{ticket.description}</p>
-        <div className='flex-grow'></div>
-        <div className='flex mt-2'>
-          <div className='flex flex-col'>
-            <p className='text-xs my-1'>{formatTimeStamp(ticket.createdAt)}</p>
+      <Link href={`/ticketPage/${ticket._id}`} className="block" style={{ display: 'contents' }}>
+        <h4 className="text-retro-cyan mb-1">{ticket.title}</h4>
+        <div className="h-0.5 bg-retro-border mb-2" />
+        <p className="whitespace-pre-wrap text-retro-muted text-xs mb-2 line-clamp-2">
+          {ticket.description}
+        </p>
+        <div className="flex-grow" />
+        <div className="flex mt-2 items-end justify-between">
+          <div className="flex flex-col gap-1">
+            <p className="text-retro-muted text-[10px]">{formatTimeStamp(ticket.createdAt)}</p>
             <ProgressBar progress={ticket.progress} />
           </div>
-          <div className='ml-auto flex items-end'>
-            <StatusDisplay status={ticket.status} />
-          </div>
+          <StatusDisplay status={ticket.status} />
         </div>
       </Link>
     </div>

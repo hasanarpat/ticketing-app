@@ -35,11 +35,13 @@ export default async function Home() {
   }
 
   return (
-    <div className="p-5">
+    <div className="p-4 sm:p-6">
       <div>
         {uniqueCategories.map((uniqueCategory, categoryIndex) => (
-          <div key={categoryIndex} className="mb-4">
-            <h2>{uniqueCategory}</h2>
+          <div key={categoryIndex} className="mb-6">
+            <h2 className="text-retro-cyan border-b-2 border-retro-border pb-2 mb-3">
+              [{uniqueCategory}]
+            </h2>
             <div className="lg:grid grid-cols-2 xl:grid-cols-4 3xl:grid-cols-5">
               {tickets
                 .filter((ticket) => ticket.category === uniqueCategory)

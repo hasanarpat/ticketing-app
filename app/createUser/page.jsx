@@ -11,7 +11,8 @@ export default async function CreateUser() {
   if (session.role !== 'admin') redirect('/');
 
   return (
-    <div>
+    <div className="p-4 max-w-xl mx-auto">
+      <h1 className="text-retro-green text-sm mb-4">[ YENİ KULLANICI ]</h1>
       <UserForm />
     </div>
   );

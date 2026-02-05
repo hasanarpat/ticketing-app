@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { AiOutlineDelete } from 'react-icons/ai';
+
 const DeleteBlock = ({ id }) => {
   const router = useRouter();
 
@@ -9,18 +9,19 @@ const DeleteBlock = ({ id }) => {
       method: 'DELETE',
       credentials: 'same-origin',
     });
-
-    if (res.ok) {
-      router.refresh();
-    }
+    if (res.ok) router.refresh();
   };
+
   return (
-    <>
-      <AiOutlineDelete
-        className="text-red-400 hover:cursor-pointer hover:text-red-200 text-2xl"
-        onClick={deleteTicket}
-      />
-    </>
+    <button
+      type="button"
+      onClick={deleteTicket}
+      className="text-retro-red hover:text-retro-orange border border-retro-red hover:border-retro-orange px-1 text-[10px] uppercase transition-colors"
+      aria-label="Sil"
+    >
+      [X]
+    </button>
   );
 };
+
 export default DeleteBlock;

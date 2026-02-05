@@ -1,31 +1,16 @@
 const StatusDisplay = ({ status }) => {
-  const setColor = (status) => {
-    let color = 'bg-slate-700';
-
-    switch (status) {
-      case 'not started':
-        color = 'bg-red-200';
-        return color;
-      case 'started':
-        color = 'bg-yellow-200';
-        return color;
-      case 'done':
-        color = 'bg-green-200';
-        return color;
-
-      default:
-        break;
-    }
-    return color;
+  const style = {
+    'not started': 'bg-retro-red text-retro-bg',
+    'started': 'bg-retro-yellow text-retro-bg',
+    'done': 'bg-retro-green text-retro-bg',
   };
-
+  const s = (status || '').toLowerCase();
+  const cls = style[s] || 'bg-retro-border text-retro-text';
   return (
     <span
-      className={`inline-block rounded-full px-2 py-1 text-center text-xs font-semibold text-gray-700 ${setColor(
-        status
-      )}`}
+      className={`inline-block border border-retro-border px-1.5 py-0.5 text-[10px] uppercase ${cls}`}
     >
-      {status}
+      {status || '—'}
     </span>
   );
 };

@@ -1,11 +1,15 @@
 const Priority = ({ priority }) => {
-  const array = [0, 1, 2, 3, 4];
-
+  const array = [1, 2, 3, 4, 5];
   return (
-    <div className="flex justify-start align-baseline text-2xl">
-      {array.map((item, _i) =>
-        item < priority ? <span key={_i}>🔥</span> : <span key={_i}>🧯</span>
-      )}
+    <div className="flex gap-0.5">
+      {array.map((level) => (
+        <span
+          key={level}
+          className={`inline-block w-2 h-2 border border-retro-border ${
+            level <= priority ? 'bg-retro-yellow' : 'bg-retro-bg'
+          }`}
+        />
+      ))}
     </div>
   );
 };
