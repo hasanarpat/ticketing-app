@@ -9,7 +9,9 @@ import { logger } from "@core/utils/logger";
 
 export function handleApiError(error: unknown): NextResponse {
   if (error instanceof AppError) {
-    logger.warn({ code: error.code, statusCode: error.statusCode, message: error.message });
+    if (error.statusCode !== 401) {
+      logger.warn({ code: error.code, statusCode: error.statusCode, message: error.message });
+    }
     return NextResponse.json(
       {
         success: false,
@@ -22,7 +24,10 @@ export function handleApiError(error: unknown): NextResponse {
     );
   }
 
-  logger.error({ err: error });
+  const err = error as Error;
+  const message = err?.message ?? "Unknown error";
+  const name = err?.name ?? "Error";
+  logger.error({ name, message });
   const isProd = process.env.NODE_ENV === "production";
   return NextResponse.json(
     {
