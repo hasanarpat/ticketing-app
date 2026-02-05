@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 import { AiOutlineDingtalk } from 'react-icons/ai';
 import { AiTwotoneEdit } from 'react-icons/ai';
-import { getV1Session } from '../../lib/auth-v1';
+import { getV1Session } from '@/lib/auth-v1';
 
 const Navbar = async () => {
   const cookieStore = await cookies();

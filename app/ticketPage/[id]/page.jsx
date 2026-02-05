@@ -1,6 +1,6 @@
 import TicketForm from '../(components)/TicketForm';
 import { cookies } from 'next/headers';
-import { getV1Session } from '../../../../lib/auth-v1';
+import { getV1Session } from '@/lib/auth-v1';
 import { redirect } from 'next/navigation';
 
 async function getTicketById(id, cookieHeader) {

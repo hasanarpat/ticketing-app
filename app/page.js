@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import TicketCard from './(components)/TicketCard';
 import EmptyStateLanding from './(components)/EmptyStateLanding';
-import { getV1Session } from '../lib/auth-v1';
+import { getV1Session } from '@/lib/auth-v1';
 import { redirect } from 'next/navigation';
 
 async function getTickets(cookieHeader) {
