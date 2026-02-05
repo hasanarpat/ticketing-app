@@ -7,6 +7,7 @@ const UserForm = () => {
   const router = useRouter();
   const [formData, setFormData] = useState({});
   const [err, setErr] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -14,19 +15,25 @@ const UserForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setErr('');
-    const res = await fetch('/api/v1/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'same-origin',
-      body: JSON.stringify(formData),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setErr(data?.error?.message || 'Kayıt başarısız');
-    } else {
-      router.refresh();
-      router.push('/');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/v1/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(formData),
+      });
+      await res.json();
+      if (!res.ok) {
+        setErr('Kayıt yapılamadı. Lütfen bilgileri kontrol edip tekrar deneyin.');
+      } else {
+        router.refresh();
+        router.push('/');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -65,7 +72,12 @@ const UserForm = () => {
           value={formData.password ?? ''}
           type="password"
         />
-        <input type="submit" value="[ CREATE USER ]" className="btn mt-2" />
+        <input
+          type="submit"
+          value={loading ? '...' : '[ CREATE USER ]'}
+          disabled={loading}
+          className="btn mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        />
       </form>
       {err && <p className="mt-2 text-retro-red text-xs">{err}</p>}
     </div>

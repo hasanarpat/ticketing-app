@@ -29,7 +29,7 @@ export default async function SingleTicket({ params }) {
   }
 
   return (
-    <div>
+    <div className="p-4">
       <TicketForm ticket={updateTicketdata} />
     </div>
   );

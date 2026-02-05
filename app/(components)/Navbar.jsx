@@ -36,9 +36,14 @@ const Navbar = async () => {
             </button>
           </form>
         ) : (
-          <Link href="/login" className="text-retro-green hover:text-retro-cyan uppercase">
-            [LOGIN]
-          </Link>
+          <>
+            <Link href="/register" className="text-retro-muted hover:text-retro-cyan uppercase">
+              [KAYIT]
+            </Link>
+            <Link href="/login" className="text-retro-green hover:text-retro-cyan uppercase">
+              [LOGIN]
+            </Link>
+          </>
         )}
       </div>
     </nav>

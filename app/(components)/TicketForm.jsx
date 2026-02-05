@@ -25,6 +25,8 @@ const TicketForm = ({ ticket, fullWidth = false }) => {
   }
 
   const [formData, setFormData] = useState(startingTicketData);
+  const [formError, setFormError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -34,31 +36,46 @@ const TicketForm = ({ ticket, fullWidth = false }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+    setFormError('');
+    setSubmitting(true);
     const body = {
       ...formData,
       priority: Number(formData.priority) || 1,
       progress: Number(formData.progress) || 0,
     };
 
-    if (EDITMODE) {
-      const res = await fetch(`/api/v1/tickets/${ticket._id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) throw new Error('Failed to update Ticket.');
-    } else {
-      const res = await fetch('/api/v1/tickets', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) throw new Error('Failed to create Ticket.');
+    try {
+      if (EDITMODE) {
+        const res = await fetch(`/api/v1/tickets/${ticket._id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+          setFormError('İşlem yapılamadı. Tekrar deneyin.');
+          return;
+        }
+      } else {
+        const res = await fetch('/api/v1/tickets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify(body),
+        });
+        if (!res.ok) {
+          setFormError('İşlem yapılamadı. Tekrar deneyin.');
+          return;
+        }
+      }
+      router.push('/');
+      router.refresh();
+    } catch {
+      setFormError('Bağlantı hatası. Tekrar deneyin.');
+    } finally {
+      setSubmitting(false);
     }
-    router.push('/');
-    router.refresh();
   };
 
   return (
@@ -126,10 +143,12 @@ const TicketForm = ({ ticket, fullWidth = false }) => {
           <option value="started">Started</option>
           <option value="done">Done</option>
         </select>
+        {formError && <p className="text-retro-red text-xs">{formError}</p>}
         <input
           type="submit"
-          className="btn mt-2"
-          value={EDITMODE ? '[ UPDATE ]' : '[ CREATE ]'}
+          className="btn mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          value={submitting ? '...' : (EDITMODE ? '[ UPDATE ]' : '[ CREATE ]')}
+          disabled={submitting}
         />
       </form>
     </div>

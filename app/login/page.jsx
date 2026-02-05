@@ -15,6 +15,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setError('');
     setLoading(true);
     try {
@@ -24,15 +25,15 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
         credentials: 'same-origin',
       });
-      const data = await res.json();
+      await res.json();
       if (!res.ok) {
-        setError(data?.error?.message || 'Giriş başarısız');
+        setError('E-posta veya şifre hatalı.');
         return;
       }
       router.push(callbackUrl);
       router.refresh();
     } catch {
-      setError('Bağlantı hatası');
+      setError('Bağlantı hatası. Tekrar deneyin.');
     } finally {
       setLoading(false);
     }
@@ -65,7 +66,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="mt-4 text-center text-retro-muted text-[10px]">
-          Hesabınız yok mu? <Link href="/createUser">[ KAYIT ]</Link>
+          Hesabınız yok mu? <Link href="/register">[ KAYIT ]</Link>
         </p>
       </div>
     </div>
